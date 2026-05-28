@@ -370,7 +370,7 @@
                 <div class="reveal relative mt-8 md:mt-0 editable" id="about-media-container">
                     <div class="absolute -top-6 -left-6 w-48 sm:w-72 h-48 sm:h-72 bg-amber-900/20 rounded-full blur-3xl"></div>
                     <div class="relative glass-effect rounded-3xl p-4 sm:p-8 glow-effect creative-image">
-                        <div class="aspect-square rounded-2xl overflow-hidden media-wrapper flex items-center justify-center" id="about-media" style="cursor: pointer; min-height: 200px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);" onclick="triggerAboutMediaUpload()">
+                        <div class="aspect-square rounded-2xl overflow-hidden media-wrapper flex items-center justify-center" id="about-media" style="cursor: pointer; min-height: 200px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); z-index: 100; position: relative;" onclick="console.log('CLICKED ABOUT-MEDIA!'); triggerAboutMediaUpload();">
                             <span class="text-amber font-poppins text-sm opacity-50" id="about-media-placeholder">Click to add image</span>
                         </div>
                     </div>
@@ -1052,43 +1052,41 @@
         }
 
         function triggerAboutMediaUpload() {
-            console.log('About media upload clicked, isLoggedIn:', isLoggedIn);
-            if (!isLoggedIn) return;
-            const input = document.createElement('input');
+            console.log('🔵 About media upload clicked!');
+            console.log('🔵 isLoggedIn:', isLoggedIn);
+            if (!isLoggedIn) {
+                alert('Please log in first!');
+                return;
+            }
+            
+            const input = document.getElementById('about-file-input') || document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*,video/*';
-            input.onchange = async (e) => {
+            input.id = 'about-file-input';
+            
+            input.onchange = (e) => {
                 const file = e.target.files[0];
-                console.log('File selected:', file);
-                if (!file) return;
+                console.log('🔵 File selected:', file);
+                if (!file) {
+                    console.log('🔴 No file selected');
+                    return;
+                }
                 
-                // Instant preview with base64!
+                // Simple base64 preview first
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     const tempUrl = event.target.result;
                     const type = file.type.startsWith('video') ? 'video' : 'image';
+                    console.log('🔵 Setting temp URL:', tempUrl);
                     siteData.media.about = [{ url: tempUrl, type }];
+                    console.log('🔵 siteData now:', siteData.media.about);
                     renderAboutMedia();
                 };
                 reader.readAsDataURL(file);
-                
-                const fileExt = file.name.split('.').pop();
-                const fileName = `${Date.now()}.${fileExt}`;
-                const filePath = `about/${fileName}`;
-                
-                console.log('Uploading to:', filePath);
-                const { error: uploadError } = await sbClient.storage.from('website-media').upload(filePath, file);
-                if (uploadError) { alert(uploadError.message); return; }
-                
-                const { data: { publicUrl } } = sbClient.storage.from('website-media').getPublicUrl(filePath);
-                console.log('Uploaded public URL:', publicUrl);
-                const type = file.type.startsWith('video') ? 'video' : 'image';
-                siteData.media.about = [{ url: publicUrl, type }];
-                localStorage.setItem('lyciaSiteData', JSON.stringify(siteData));
-                console.log('siteData updated:', siteData.media.about);
-                renderAboutMedia();
             };
+            
             input.click();
+            console.log('🔵 File input clicked');
         }
         
         function renderAboutMedia() {
@@ -1131,9 +1129,15 @@
         }
         
         function deleteAboutMedia() {
-            if (!confirm('Delete this media?')) return;
+            console.log('🔴 Delete about media called!');
+            if (!confirm('Delete this media?')) {
+                console.log('🔴 Delete cancelled');
+                return;
+            }
+            
             siteData.media.about = [];
             localStorage.setItem('lyciaSiteData', JSON.stringify(siteData));
+            console.log('🔵 siteData cleared, rendering...');
             renderAboutMedia();
         }
         
