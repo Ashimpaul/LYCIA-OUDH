@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LYCIA-OUDH NORTHEAST | Essence of the Northeast</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; max-width: 100%; }
+        html, body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #f5f5f5;
+            overflow-x: hidden;
+            width: 100vw;
+            max-width: 100vw;
+        }
+        img, video, svg, canvas { overflow-x: hidden; max-width: 100%; }
+        .product-card, .hover-glow, .media-item, .gallery-item, .btn-primary, .btn-secondary {
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .section-padding { padding: 80px 0; }
+        @media (max-width: 640px) { .section-padding { padding: 60px 0; } }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+        .font-cormorant { font-family: 'Cormorant Garamond', serif; }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .font-inter { font-family: 'Inter', sans-serif; }
+        .text-amber { color: #d4af37; }
+        .bg-amber { background-color: #d4af37; }
+        .border-amber { border-color: #d4af37; }
+        .glass-effect {
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+        .glow-effect { box-shadow: 0 0 40px rgba(212, 175, 55, 0.2); }
+        .hover-glow:hover { box-shadow: 0 0 60px rgba(212, 175, 55, 0.3); }
+        .hover-glow-scale:hover { 
+            box-shadow: 0 0 60px rgba(212, 175, 55, 0.3); 
+            transform: scale(1.02);
+        }
+        .hover-glow-scale { transition: all 0.3s ease; }
+        .smooth-scroll { scroll-behavior: smooth; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .animate-fade-in-up { animation: fadeInUp 1s ease-out forwards; }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .product-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .product-card:hover { transform: translateY(-10px); }
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37 0%, #f0e68c 100%);
+            color: #050505;
+            font-weight: 600;
+            padding: 16px 40px;
+            border-radius: 50px;
+            transition: all 0.4s ease;
+        }
+        .btn-primary:hover { transform: scale(1.05); box-shadow: 0 10px 40px rgba(212, 175, 55, 0.4); }
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #d4af37;
+            color: #d4af37;
+            font-weight: 600;
+            padding: 14px 38px;
+            border-radius: 50px;
+            transition: all 0.4s ease;
+        }
+        .btn-secondary:hover { background: #d4af37; color: #050505; }
+        .navbar { transition: all 0.4s ease; }
+        .navbar.scrolled {
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        .hero-slideshow { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .hero-slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; opacity: 0; transition: opacity 2.5s ease-in-out;
+        }
+        .hero-slide.active { opacity: 0.8; }
+        .creative-image { position: relative; overflow: hidden; }
+        .creative-image::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transition: left 0.8s ease; z-index: 1;
+        }
+        .creative-image:hover::before { left: 100%; }
+        .creative-gallery {
+            display: grid; grid-template-columns: repeat(1, 1fr); gap: 8px; padding: 0 4px;
+        }
+        @media (min-width: 480px) {
+            .creative-gallery { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 768px) {
+            .creative-gallery { grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0; }
+        }
+        @media (min-width: 1024px) {
+            .creative-gallery { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        }
+        @media (min-width: 1280px) {
+            .creative-gallery { grid-template-columns: repeat(5, 1fr); gap: 20px; }
+        }
+        .gallery-item {
+            position: relative; aspect-ratio: 4/3; overflow: hidden; border-radius: 16px;
+            cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .gallery-item.large { 
+            grid-column: span 2; 
+            grid-row: span 2;
+            aspect-ratio: auto;
+        }
+        @media (min-width: 768px) {
+            .gallery-item { aspect-ratio: 1; }
+        }
+        .gallery-item:hover, .gallery-item:active { transform: scale(0.98); z-index: 10; }
+        .gallery-item img, .gallery-item video {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .gallery-item:hover img, .gallery-item:active img,
+        .gallery-item:hover video, .gallery-item:active video { transform: scale(1.1); }
+        .gallery-overlay {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+        }
+        .gallery-item:hover .gallery-overlay, .gallery-item:active .gallery-overlay { opacity: 1; }
+        .reveal {
+            opacity: 0; transform: translateY(30px);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal-scale {
+            opacity: 0; transform: scale(0.9);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .reveal-scale.active { opacity: 1; transform: scale(1); }
+        
+        /* Admin Edit Styles */
+        .edit-mode .editable { position: relative; }
+        .edit-btn {
+            position: absolute; top: -8px; right: -8px; z-index: 50;
+            background: #d4af37; color: #000; border: none; border-radius: 50%;
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+            transition: all 0.3s ease;
+        }
+        @media (min-width: 640px) {
+            .edit-btn {
+                top: -10px; right: -10px;
+                width: 36px; height: 36px;
+            }
+        }
+        .edit-btn:hover { transform: scale(1.1); }
+        .add-btn {
+            display: flex; align-items: center; justify-content: center;
+            gap: 2; background: rgba(212, 175, 55, 0.2);
+            border: 2px dashed #d4af37; border-radius: 16px;
+            min-height: 200px; cursor: pointer; transition: all 0.3s ease;
+        }
+        .add-btn:hover { background: rgba(212, 175, 55, 0.3); }
+        .editable-text { cursor: text; }
+        .editable-text:focus {
+            outline: 2px solid #d4af37; outline-offset: 4px;
+            border-radius: 8px; background: rgba(212, 175, 55, 0.1);
+        }
+        .admin-bar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            background: #d4af37; color: #000; padding: 8px 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 8px;
+        }
+        @media (min-width: 640px) {
+            .admin-bar {
+                padding: 10px 20px;
+                gap: 12px;
+            }
+        }
+        .save-btn {
+            background: #000; color: #d4af37; border: none; padding: 6px 12px;
+            border-radius: 8px; cursor: pointer; font-weight: 600;
+        }
+        @media (min-width: 640px) {
+            .save-btn {
+                padding: 8px 20px;
+            }
+        }
+        .media-wrapper { position: relative; }
+        .delete-btn {
+            position: absolute; top: 8px; right: 8px;
+            background: #ef4444; color: white; border: none; border-radius: 6px;
+            padding: 4px 8px; cursor: pointer; font-weight: 600; z-index: 20;
+            font-size: 12px;
+        }
+        @media (min-width: 640px) {
+            .delete-btn {
+                top: 10px; right: 10px;
+                padding: 6px 12px;
+                font-size: 14px;
+                border-radius: 8px;
+            }
+        }
+        .input-field {
+            background: rgba(0, 0, 0, 0.6) !important;
+            border: 2px solid rgba(212, 175, 55, 0.5) !important;
+            color: #ffffff !important;
+            padding: 14px 22px;
+            border-radius: 12px;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            z-index: 10000;
+            position: relative;
+        }
+        .input-field::placeholder {
+            color: rgba(212, 175, 55, 0.8) !important;
+            opacity: 1 !important;
+        }
+        .input-field:focus {
+            outline: none !important;
+            border-color: #d4af37 !important;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.5) !important;
+            background: rgba(0, 0, 0, 0.8) !important;
+        }
+    </style>
+</head>
+<body class="smooth-scroll">
+    <!-- Admin Bar -->
+    <div id="admin-bar" class="admin-bar hidden">
+        <span class="font-poppins font-bold text-sm sm:text-base">✏️ Edit Mode Active</span>
+        <div class="flex gap-2 sm:gap-3">
+            <button onclick="saveChanges()" class="save-btn text-xs sm:text-sm">Save Changes</button>
+            <button onclick="toggleEditMode(false)" class="btn-secondary text-xs sm:text-sm py-1.5 sm:py-2 px-3 sm:px-4">Exit Edit</button>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav id="navbar" class="navbar fixed top-0 left-0 w-full z-50 py-4 px-4 sm:px-6 md:px-8 lg:px-16" style="margin-top: 0;">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="relative media-wrapper" id="logo-media" style="cursor: pointer;" onclick="triggerLogoUpload()">
+                    <img src="logo.jpeg" alt="LYCIA-OUDH Logo" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover">
+                </div>
+                <div>
+                    <h1 class="font-playfair text-lg sm:text-xl md:text-2xl font-bold text-amber tracking-wider">LYCIA-OUDH</h1>
+                    <p class="font-cormorant text-[10px] sm:text-xs md:text-sm text-gray-400 tracking-widest uppercase">Northeast</p>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center gap-6 lg:gap-10">
+                <a href="#home" class="font-poppins text-sm tracking-widest hover:text-amber transition-colors">HOME</a>
+                <a href="#about" class="font-poppins text-sm tracking-widest hover:text-amber transition-colors">ABOUT</a>
+                <a href="#vision-mission" class="font-poppins text-sm tracking-widest hover:text-amber transition-colors">VISION</a>
+                <a href="#why-choose-us" class="font-poppins text-sm tracking-widest hover:text-amber transition-colors">WHY US</a>
+                <a href="#products" class="font-poppins text-sm tracking-widest hover:text-amber transition-colors">PRODUCTS</a>
+                <a href="#gallery" class="font-poppins text-sm tracking-widest hover:text-amber transition-colors">GALLERY</a>
+                <a href="#exports" class="font-poppins text-sm tracking-widest hover:text-amber transition-colors">EXPORTS</a>
+                <a href="#contact" class="font-poppins text-sm tracking-widest hover:text-amber transition-colors">CONTACT</a>
+            </div>
+            <div class="flex items-center gap-2 sm:gap-4">
+                <button id="auth-btn" class="hidden md:flex btn-secondary text-xs sm:text-sm py-1.5 sm:py-2 px-3 sm:px-4">Admin Login</button>
+                <button id="mobile-menu-btn" class="md:hidden text-amber">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden mt-6 glass-effect rounded-2xl p-6">
+            <a href="#home" class="block py-3 font-poppins text-sm tracking-widest hover:text-amber transition-colors">HOME</a>
+            <a href="#about" class="block py-3 font-poppins text-sm tracking-widest hover:text-amber transition-colors">ABOUT</a>
+            <a href="#vision-mission" class="block py-3 font-poppins text-sm tracking-widest hover:text-amber transition-colors">VISION & MISSION</a>
+            <a href="#why-choose-us" class="block py-3 font-poppins text-sm tracking-widest hover:text-amber transition-colors">WHY CHOOSE US</a>
+            <a href="#products" class="block py-3 font-poppins text-sm tracking-widest hover:text-amber transition-colors">PRODUCTS</a>
+            <a href="#gallery" class="block py-3 font-poppins text-sm tracking-widest hover:text-amber transition-colors">GALLERY</a>
+            <a href="#exports" class="block py-3 font-poppins text-sm tracking-widest hover:text-amber transition-colors">EXPORTS</a>
+            <a href="#contact" class="block py-3 font-poppins text-sm tracking-widest hover:text-amber transition-colors">CONTACT</a>
+            <div class="pt-4 border-t border-gray-700 mt-4">
+                <button id="mobile-auth-btn" class="btn-secondary text-sm py-2 px-4 w-full">Admin Login</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div id="hero-slideshow" class="hero-slideshow" style="cursor: pointer;" onclick="triggerHeroMediaUpload()"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/40"></div>
+        <div class="absolute inset-0 opacity-40" style="background-image: radial-gradient(circle at 30% 30%, rgba(212,175,55,0.15) 0%, transparent 50%), radial-gradient(circle at 70% 70%, rgba(26,77,46,0.1) 0%, transparent 50%);"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 text-center">
+            <div class="animate-fade-in-up">
+                <p class="font-cormorant text-amber tracking-[0.3em] uppercase text-xs sm:text-sm md:text-base mb-4 sm:mb-6">Essence of the Northeast</p>
+                <h1 id="hero-title" class="font-playfair text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-bold leading-tight mb-4 sm:mb-6 editable-text" contenteditable="false">
+                    Pure Agarwood Oil<br>
+                    <span class="text-amber">From Northeast India</span>
+                </h1>
+                <p id="hero-desc" class="font-cormorant text-lg sm:text-xl md:text-2xl text-gray-300 mb-8 sm:mb-12 max-w-2xl mx-auto editable-text" contenteditable="false">
+                    Rare. Authentic. Handcrafted by Nature.
+                </p>
+                <div class="flex flex-col sm:flex-col md:flex-row gap-4 sm:gap-6 justify-center items-center">
+                    <a href="#products" class="btn-primary font-poppins w-full sm:w-auto">Explore Collection</a>
+                    <a href="#about" class="btn-secondary font-poppins w-full sm:w-auto">Discover Our Heritage</a>
+                    <a href="#contact" class="btn-secondary font-poppins w-full sm:w-auto">Export Inquiry</a>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-float">
+            <svg class="w-12 h-12 text-amber" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 4C32 4 12 18 12 36C12 48 20 56 32 56C44 56 52 48 52 36C52 18 32 4 32 4Z" fill="currentColor" fill-opacity="0.3"/>
+                <path d="M32 8C32 8 16 20 16 36C16 46 22 52 32 52C42 52 48 46 48 36C48 20 32 8 32 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M32 12V52" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section-padding bg-gradient-to-b from-black to-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
+            <div class="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+                <div class="reveal">
+                    <p class="font-cormorant text-amber tracking-[0.3em] uppercase text-sm mb-4">About the Brand</p>
+                    <h2 id="about-title" class="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold mb-8 editable-text" contenteditable="false">
+                        Inspired by <span class="text-amber">Nature's Heritage</span>
+                    </h2>
+                    <p id="about-desc" class="font-inter text-gray-300 text-lg leading-relaxed mb-8 editable-text" contenteditable="false">
+                        LYCIA-OUDH NORTHEAST is inspired by the rich forests and natural heritage of Northeast India. Our premium agarwood oil and oud products are crafted to deliver authenticity, purity, and timeless luxury in every drop.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 sm:gap-6">
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6 hover-glow transition-all">
+                            <h3 class="font-playfair text-amber text-2xl sm:text-3xl font-bold mb-2">100%</h3>
+                            <p class="font-poppins text-gray-400 text-xs sm:text-sm">Natural Ingredients</p>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6 hover-glow transition-all">
+                            <h3 class="font-playfair text-amber text-2xl sm:text-3xl font-bold mb-2">Steam</h3>
+                            <p class="font-poppins text-gray-400 text-xs sm:text-sm">Distilled Purity</p>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6 hover-glow transition-all">
+                            <h3 class="font-playfair text-amber text-2xl sm:text-3xl font-bold mb-2">Premium</h3>
+                            <p class="font-poppins text-gray-400 text-xs sm:text-sm">Craftsmanship</p>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6 hover-glow transition-all">
+                            <h3 class="font-playfair text-amber text-2xl sm:text-3xl font-bold mb-2">Export</h3>
+                            <p class="font-poppins text-gray-400 text-xs sm:text-sm">Quality Standards</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal relative mt-8 md:mt-0 editable" id="about-media-container">
+                    <div class="absolute -top-6 -left-6 w-48 sm:w-72 h-48 sm:h-72 bg-amber-900/20 rounded-full blur-3xl"></div>
+                    <div class="relative glass-effect rounded-3xl p-4 sm:p-8 glow-effect creative-image">
+                        <div class="aspect-square rounded-2xl overflow-hidden media-wrapper" id="about-media" style="cursor: pointer;" onclick="triggerAboutMediaUpload()">
+                            <img src="forest-1.jpg" alt="Agarwood Forests" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <!-- Products Section -->
+    <section id="products" class="section-padding bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
+            <div class="text-center mb-20 reveal">
+                <p class="font-cormorant text-amber tracking-[0.3em] uppercase text-sm mb-4">Our Collection</p>
+                <h2 id="products-title" class="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold editable-text" contenteditable="false">Premium <span class="text-amber">Oud Products</span></h2>
+            </div>
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"></div>
+            <div id="add-product-btn" class="hidden mt-8">
+                <div class="add-btn" onclick="addProduct()">
+                    <svg class="w-12 h-12 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span class="text-amber font-poppins ml-2">Add Product</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="section-padding bg-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
+            <div class="text-center mb-12 sm:mb-16 reveal">
+                <p class="font-cormorant text-amber tracking-[0.3em] uppercase text-xs sm:text-sm mb-4">Our Journey</p>
+                <h2 id="gallery-title" class="font-playfair text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold editable-text" contenteditable="false">Watch the <span class="text-amber">Authentic Process</span></h2>
+                <p id="gallery-desc" class="font-cormorant text-base sm:text-lg md:text-xl text-gray-400 mt-4 max-w-3xl mx-auto editable-text" contenteditable="false">From the lush forests of Northeast India to the final luxurious bottle - witness the real, handcrafted journey of our premium agarwood oil.</p>
+            </div>
+            <div id="gallery-grid" class="creative-gallery"></div>
+            <div id="add-gallery-btn" class="hidden mt-8">
+                <div class="add-btn" onclick="addGalleryItem()">
+                    <svg class="w-12 h-12 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span class="text-amber font-poppins ml-2">Add to Gallery</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Exports Section -->
+    <section id="exports" class="section-padding bg-gradient-to-b from-gray-900 to-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
+            <div class="text-center mb-20 reveal">
+                <p class="font-cormorant text-amber tracking-[0.3em] uppercase text-sm mb-4">Global Reach</p>
+                <h2 class="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold">Export <span class="text-amber">Services</span></h2>
+            </div>
+            <div class="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+                <div class="reveal">
+                    <h3 class="font-playfair text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Export Destinations</h3>
+                    <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-10 sm:mb-12">
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6 hover-glow transition-all">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber/20 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <h4 class="font-playfair text-lg sm:text-xl font-bold mb-1">Dubai</h4>
+                            <p class="font-poppins text-gray-400 text-xs sm:text-sm">UAE</p>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6 hover-glow transition-all">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber/20 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <h4 class="font-playfair text-lg sm:text-xl font-bold mb-1">Middle East</h4>
+                            <p class="font-poppins text-gray-400 text-xs sm:text-sm">Countries</p>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6 hover-glow transition-all">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber/20 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <h4 class="font-playfair text-lg sm:text-xl font-bold mb-1">Southeast Asia</h4>
+                            <p class="font-poppins text-gray-400 text-xs sm:text-sm">Markets</p>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6 hover-glow transition-all">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber/20 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <h4 class="font-playfair text-lg sm:text-xl font-bold mb-1">Europe</h4>
+                            <p class="font-poppins text-gray-400 text-xs sm:text-sm">International</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal mt-8 md:mt-0">
+                    <h3 class="font-playfair text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Services Offered</h3>
+                    <div class="space-y-3 sm:space-y-4">
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6 flex items-center gap-4 sm:gap-6 hover-glow transition-all">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-amber/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <h4 class="font-playfair text-lg sm:text-xl font-bold">Premium Packaging</h4>
+                                <p class="font-poppins text-gray-400 text-xs sm:text-sm">Luxury gift packaging solutions</p>
+                            </div>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6 flex items-center gap-4 sm:gap-6 hover-glow transition-all">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-amber/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <h4 class="font-playfair text-lg sm:text-xl font-bold">Private Labeling</h4>
+                                <p class="font-poppins text-gray-400 text-xs sm:text-sm">Custom branding solutions</p>
+                            </div>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6 flex items-center gap-4 sm:gap-6 hover-glow transition-all">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-amber/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <h4 class="font-playfair text-lg sm:text-xl font-bold">Bulk Orders</h4>
+                                <p class="font-poppins text-gray-400 text-xs sm:text-sm">Wholesale supply available</p>
+                            </div>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6 flex items-center gap-4 sm:gap-6 hover-glow transition-all">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-amber/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <h4 class="font-playfair text-lg sm:text-xl font-bold">International Shipping</h4>
+                                <p class="font-poppins text-gray-400 text-xs sm:text-sm">Worldwide logistics support</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Vision & Mission Section -->
+    <section id="vision-mission" class="section-padding bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
+            <div class="text-center mb-16 reveal">
+                <p class="font-cormorant text-amber tracking-[0.3em] uppercase text-sm mb-4">Our Purpose</p>
+                <h2 class="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold">Vision & Mission</h2>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 md:gap-12">
+                <div class="reveal glass-effect rounded-3xl p-8 hover-glow transition-all">
+                    <div class="w-14 h-14 bg-amber/20 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                    </div>
+                    <h3 id="vision-title" class="font-playfair text-2xl font-bold text-amber mb-4 editable-text" contenteditable="false">Our Vision</h3>
+                    <p id="vision-desc" class="font-inter text-gray-300 leading-relaxed editable-text" contenteditable="false">
+                        To become the most trusted and respected provider of authentic Northeast Indian agarwood oil, delivering unparalleled quality and luxury to customers worldwide.
+                    </p>
+                </div>
+                <div class="reveal glass-effect rounded-3xl p-8 hover-glow transition-all" style="animation-delay: 0.1s;">
+                    <div class="w-14 h-14 bg-amber/20 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 id="mission-title" class="font-playfair text-2xl font-bold text-amber mb-4 editable-text" contenteditable="false">Our Mission</h3>
+                    <p id="mission-desc" class="font-inter text-gray-300 leading-relaxed editable-text" contenteditable="false">
+                        To preserve and promote the natural heritage of Northeast India by producing premium, 100% natural agarwood oil using sustainable practices and traditional craftsmanship.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section id="why-choose-us" class="section-padding bg-gradient-to-b from-gray-900 to-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
+            <div class="text-center mb-16 reveal">
+                <p class="font-cormorant text-amber tracking-[0.3em] uppercase text-sm mb-4">Why Choose Us</p>
+                <h2 class="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold">What Makes Us Different</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="reveal glass-effect rounded-2xl p-6 hover-glow transition-all text-center">
+                    <div class="w-16 h-16 mx-auto bg-amber/20 rounded-2xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h4 class="font-playfair text-xl font-bold mb-2">100% Pure</h4>
+                    <p class="font-poppins text-gray-400 text-sm">No additives or dilutions - just pure, natural agarwood oil</p>
+                </div>
+                <div class="reveal glass-effect rounded-2xl p-6 hover-glow transition-all text-center" style="animation-delay: 0.1s;">
+                    <div class="w-16 h-16 mx-auto bg-amber/20 rounded-2xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h4 class="font-playfair text-xl font-bold mb-2">Sustainable</h4>
+                    <p class="font-poppins text-gray-400 text-sm">Ethically sourced from sustainable forests in Northeast India</p>
+                </div>
+                <div class="reveal glass-effect rounded-2xl p-6 hover-glow transition-all text-center" style="animation-delay: 0.2s;">
+                    <div class="w-16 h-16 mx-auto bg-amber/20 rounded-2xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h4 class="font-playfair text-xl font-bold mb-2">Traditional Craft</h4>
+                    <p class="font-poppins text-gray-400 text-sm">Steam distilled using age-old traditional methods</p>
+                </div>
+                <div class="reveal glass-effect rounded-2xl p-6 hover-glow transition-all text-center" style="animation-delay: 0.3s;">
+                    <div class="w-16 h-16 mx-auto bg-amber/20 rounded-2xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h4 class="font-playfair text-xl font-bold mb-2">Global Export</h4>
+                    <p class="font-poppins text-gray-400 text-sm">Shipping to customers worldwide with premium packaging</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Contact Section -->
+    <section id="contact" class="section-padding bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
+            <div class="text-center mb-12 sm:mb-16">
+                <p class="font-cormorant text-amber tracking-[0.3em] uppercase text-xs sm:text-sm mb-3 sm:mb-4">Get In Touch</p>
+                <h2 class="font-playfair text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">Contact & <span class="text-amber">Inquiries</span></h2>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-8 sm:gap-10 md:gap-16">
+                <div>
+                    <h3 class="font-playfair text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Company Details</h3>
+                    <div class="space-y-4 mb-8 sm:mb-12">
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6">
+                            <h4 class="font-playfair text-lg sm:text-xl font-bold mb-1 sm:mb-2">Manufacturing By</h4>
+                            <p class="font-inter text-gray-300 text-sm sm:text-base break-words">LYCIA Global Pvt Ltd</p>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6">
+                            <h4 class="font-playfair text-lg sm:text-xl font-bold mb-1 sm:mb-2">GST Number</h4>
+                            <p class="font-inter text-gray-300 text-sm sm:text-base break-words">13AAGCL6047H1ZL</p>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6">
+                            <h4 class="font-playfair text-lg sm:text-xl font-bold mb-1 sm:mb-2">IEC Code</h4>
+                            <p class="font-inter text-gray-300 text-sm sm:text-base break-words">AAGCL6047H</p>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6">
+                            <h4 class="font-playfair text-lg sm:text-xl font-bold mb-1 sm:mb-2">Address</h4>
+                            <p class="font-inter text-gray-300 text-sm sm:text-base break-words">277 Sovima, 6th Mile, Dimapur, Nagaland – 797103, India</p>
+                        </div>
+                        <div class="glass-effect rounded-2xl p-4 sm:p-6">
+                            <h4 class="font-playfair text-lg sm:text-xl font-bold mb-1 sm:mb-2">Directors</h4>
+                            <p class="font-inter text-gray-300 text-sm sm:text-base break-words">Rachel Tep • Mustafa Ahmed</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-3 sm:gap-4">
+                        <a href="mailto:lyciaglobaltradingpvtltd@gmail.com" class="glass-effect rounded-2xl p-4 sm:p-6 flex items-center gap-4 sm:gap-6 hover-glow transition-all">
+                            <div class="w-10 h-10 sm:w-14 sm:h-14 bg-amber/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 sm:w-7 sm:h-7 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            </div>
+                            <div class="min-w-0">
+                                <h4 class="font-playfair text-lg sm:text-xl font-bold">Email Us</h4>
+                                <p class="font-poppins text-gray-400 text-xs sm:text-sm break-all">lyciaglobaltradingpvtltd@gmail.com</p>
+                            </div>
+                        </a>
+                        <a href="https://wa.me/917005654424" target="_blank" class="btn-primary flex items-center justify-center gap-3 font-poppins w-full">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                            WhatsApp: +91 70056 54424
+                        </a>
+                    </div>
+                </div>
+                <div class="mt-8 lg:mt-0">
+                    <div class="glass-effect rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-10 glow-effect">
+                        <h3 class="font-playfair text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Export Inquiry Form</h3>
+                        <form class="space-y-4 sm:space-y-6">
+                            <div><label class="block font-poppins text-xs sm:text-sm text-gray-400 mb-2">Full Name</label><input type="text" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 sm:px-6 py-3 sm:py-4 font-inter text-sm sm:text-base focus:border-amber focus:outline-none transition-colors" placeholder="Your Name"></div>
+                            <div><label class="block font-poppins text-xs sm:text-sm text-gray-400 mb-2">Email Address</label><input type="email" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 sm:px-6 py-3 sm:py-4 font-inter text-sm sm:text-base focus:border-amber focus:outline-none transition-colors" placeholder="your@email.com"></div>
+                            <div><label class="block font-poppins text-xs sm:text-sm text-gray-400 mb-2">Company Name</label><input type="text" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 sm:px-6 py-3 sm:py-4 font-inter text-sm sm:text-base focus:border-amber focus:outline-none transition-colors" placeholder="Your Company"></div>
+                            <div><label class="block font-poppins text-xs sm:text-sm text-gray-400 mb-2">Country</label><input type="text" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 sm:px-6 py-3 sm:py-4 font-inter text-sm sm:text-base focus:border-amber focus:outline-none transition-colors" placeholder="Your Country"></div>
+                            <div><label class="block font-poppins text-xs sm:text-sm text-gray-400 mb-2">Message</label><textarea rows="4" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 sm:px-6 py-3 sm:py-4 font-inter text-sm sm:text-base focus:border-amber focus:outline-none transition-colors resize-none" placeholder="Tell us about your requirements..."></textarea></div>
+                            <button type="submit" class="btn-primary w-full font-poppins text-sm sm:text-base">Send Inquiry</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-gray-800 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="relative media-wrapper" style="cursor: pointer;" onclick="triggerLogoUpload()">
+                            <img src="logo.jpeg" alt="LYCIA-OUDH Logo" class="w-12 h-12 rounded-full object-cover">
+                        </div>
+                        <div><h2 class="font-playfair text-2xl font-bold text-amber tracking-wider">LYCIA-OUDH</h2><p class="font-cormorant text-sm text-gray-400 tracking-widest uppercase">Northeast</p></div>
+                    </div>
+                    <p class="font-inter text-gray-400 leading-relaxed mb-6">Essence of the Northeast - Premium agarwood oil and oud fragrance products from the rich forests of Nagaland, India.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-12 h-12 bg-amber/20 rounded-xl flex items-center justify-center hover:bg-amber/30 transition-colors"><svg class="w-5 h-5 text-amber" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                        <a href="#" class="w-12 h-12 bg-amber/20 rounded-xl flex items-center justify-center hover:bg-amber/30 transition-colors"><svg class="w-5 h-5 text-amber" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg></a>
+                        <a href="#" class="w-12 h-12 bg-amber/20 rounded-xl flex items-center justify-center hover:bg-amber/30 transition-colors"><svg class="w-5 h-5 text-amber" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg></a>
+                    </div>
+                </div>
+                <div><h3 class="font-playfair text-xl font-bold mb-6">Quick Links</h3><ul class="space-y-4"><li><a href="#home" class="font-poppins text-gray-400 hover:text-amber transition-colors">Home</a></li><li><a href="#about" class="font-poppins text-gray-400 hover:text-amber transition-colors">About</a></li><li><a href="#vision-mission" class="font-poppins text-gray-400 hover:text-amber transition-colors">Vision & Mission</a></li><li><a href="#why-choose-us" class="font-poppins text-gray-400 hover:text-amber transition-colors">Why Choose Us</a></li><li><a href="#products" class="font-poppins text-gray-400 hover:text-amber transition-colors">Products</a></li><li><a href="#gallery" class="font-poppins text-gray-400 hover:text-amber transition-colors">Gallery</a></li><li><a href="#exports" class="font-poppins text-gray-400 hover:text-amber transition-colors">Exports</a></li><li><a href="#contact" class="font-poppins text-gray-400 hover:text-amber transition-colors">Contact</a></li></ul></div>
+                <div><h3 class="font-playfair text-xl font-bold mb-6">Contact Info</h3><ul class="space-y-4"><li class="font-poppins text-gray-400">lyciaglobaltradingpvtltd@gmail.com</li><li class="font-poppins text-gray-400">+91 70056 54424</li><li class="font-poppins text-gray-400">277 Sovima, 6th Mile,<br>Dimapur, Nagaland – 797103</li></ul></div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center"><p class="font-poppins text-gray-500 text-sm">© 2024 LYCIA-OUDH NORTHEAST. All rights reserved. Manufactured by LYCIA Global Pvt Ltd.</p></div>
+        </div>
+    </footer>
+
+    <!-- Hidden File Inputs -->
+    <input type="file" id="logo-upload" accept="image/*" style="display: none;" onchange="handleLogoUpload(event)">
+    <input type="file" id="media-upload" accept="image/*,video/*" style="display: none;">
+    
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4" onclick="if(event.target === this) closeLoginModal()">
+        <div class="glass-effect rounded-3xl p-8 w-full max-w-md glow-effect z-[99999]">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="font-playfair text-2xl font-bold text-amber">Admin Login</h2>
+                <button onclick="closeLoginModal()" class="text-gray-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div><label class="block text-sm text-gray-400 mb-2">Email</label><input type="text" id="login-email" class="input-field" readonly style="opacity: 0.8;"></div>
+                <div><label class="block text-sm text-gray-400 mb-2">Password</label><input type="password" id="login-password" class="input-field" placeholder="••••••••" required></div>
+                <button type="submit" class="btn-primary w-full">Sign In</button>
+            </form>
+            <p id="login-error" class="text-red-400 text-sm mt-4 text-center hidden"></p>
+        </div>
+    </div>
+
+    <script>
+        const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let isLoggedIn = false;
+        let siteData = { sections: {}, media: { hero: [], products: [], gallery: [], about: [] } };
+        let unsavedChanges = false;
+        let inactivityTimer = null;
+        let heroSlideshowInterval = null;
+        const ADMIN_EMAIL = "ashim321paul@gmail.com";
+        const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                navbar.classList.toggle('scrolled', window.scrollY > 50);
+            });
+
+            document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.toggle('hidden');
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                });
+            });
+
+            // Handle both desktop and mobile auth buttons
+            function maskEmail(email) {
+                const [localPart, domain] = email.split('@');
+                if (localPart.length <= 3) {
+                    return email;
+                }
+                const visibleStart = localPart.substring(0, 3);
+                const visibleEnd = localPart.substring(localPart.length - 2);
+                const maskedPart = '•'.repeat(localPart.length - 5);
+                return `${visibleStart}${maskedPart}${visibleEnd}@${domain}`;
+            }
+            
+            const authButtons = [document.getElementById('auth-btn'), document.getElementById('mobile-auth-btn')];
+            authButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (isLoggedIn) {
+                        logout();
+                    } else {
+                        // Set masked email when opening modal
+                        const emailInput = document.getElementById('login-email');
+                        emailInput.value = maskEmail(ADMIN_EMAIL);
+                        document.getElementById('login-modal').classList.remove('hidden');
+                    }
+                });
+            });
+
+            ['mousemove', 'keydown', 'scroll', 'click'].forEach(evt => {
+                document.addEventListener(evt, resetInactivityTimer);
+            });
+
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+
+            await checkAuth();
+            await loadSiteData();
+            renderHeroSlideshow();
+            renderProducts();
+            renderGallery();
+            initRevealAnimations();
+        });
+
+        function updateAuthButtons() {
+            const buttons = [document.getElementById('auth-btn'), document.getElementById('mobile-auth-btn')];
+            buttons.forEach(btn => {
+                if (isLoggedIn) {
+                    btn.textContent = 'Logout';
+                } else {
+                    btn.textContent = 'Admin Login';
+                }
+            });
+        }
+        
+        async function checkAuth() {
+            const { data: { session } } = await sbClient.auth.getSession();
+            if (session) {
+                isLoggedIn = true;
+                updateAuthButtons();
+                resetInactivityTimer();
+                toggleEditMode(true);
+            }
+        }
+
+        function resetInactivityTimer() {
+            if (!isLoggedIn) return;
+            if (inactivityTimer) clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(autoLogout, INACTIVITY_TIMEOUT);
+        }
+
+        async function autoLogout() {
+            if (!isLoggedIn) return;
+            await sbClient.auth.signOut();
+            isLoggedIn = false;
+            toggleEditMode(false);
+            updateAuthButtons();
+            alert('You have been logged out due to inactivity.');
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = ADMIN_EMAIL;
+            const password = document.getElementById('login-password').value;
+            const errorEl = document.getElementById('login-error');
+            
+            errorEl.classList.add('hidden');
+            const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+            
+            if (error) {
+                errorEl.textContent = error.message;
+                errorEl.classList.remove('hidden');
+            } else {
+                isLoggedIn = true;
+                updateAuthButtons();
+                closeLoginModal();
+                resetInactivityTimer();
+                toggleEditMode(true);
+            }
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        async function logout() {
+            if (inactivityTimer) clearTimeout(inactivityTimer);
+            await sbClient.auth.signOut();
+            isLoggedIn = false;
+            toggleEditMode(false);
+            updateAuthButtons();
+        }
+
+        function toggleEditMode(enable) {
+            if (enable && !isLoggedIn) {
+                document.getElementById('login-modal').classList.remove('hidden');
+                return;
+            }
+            
+            document.body.classList.toggle('edit-mode', enable);
+            document.getElementById('admin-bar').classList.toggle('hidden', !enable);
+            
+            // Calculate admin bar height and adjust navbar and body padding
+            const adminBar = document.getElementById('admin-bar');
+            let adminBarHeight = 0;
+            if (enable) {
+                adminBarHeight = adminBar.offsetHeight;
+            }
+            document.getElementById('navbar').style.marginTop = enable ? `${adminBarHeight}px` : '0';
+            // Add padding to body top so content isn't hidden under admin bar
+            document.body.style.paddingTop = enable ? `${adminBarHeight}px` : '0';
+            
+            document.getElementById('add-product-btn').classList.toggle('hidden', !enable);
+            document.getElementById('add-gallery-btn').classList.toggle('hidden', !enable);
+
+            document.querySelectorAll('.editable-text').forEach(el => {
+                el.contentEditable = enable;
+            });
+
+            if (enable) {
+                addEditButtons();
+                renderProducts();
+                renderGallery();
+            } else {
+                document.querySelectorAll('.edit-btn, .delete-btn').forEach(el => el.remove());
+            }
+        }
+
+        function addEditButtons() {
+            ['about-media-container'].forEach(id => {
+                const container = document.getElementById(id);
+                if (container && !container.querySelector('.edit-btn')) {
+                    const btn = document.createElement('button');
+                    btn.className = 'edit-btn';
+                    btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+                    btn.onclick = () => triggerMediaUpload(id === 'about-media-container' ? 'about' : 'hero');
+                    container.style.position = 'relative';
+                    container.appendChild(btn);
+                }
+            });
+        }
+
+        async function loadSiteData() {
+            const { data: sections } = await sbClient.from('sections').select('*');
+            const { data: media } = await sbClient.from('media_items').select('*, sections(name)').order('sort_order');
+            
+            if (sections) {
+                sections.forEach(s => siteData.sections[s.name] = s);
+            }
+            
+            if (media) {
+                media.forEach(m => {
+                    const section = m.sections?.name;
+                    if (section && siteData.media[section]) {
+                        siteData.media[section].push(m);
+                    }
+                });
+            }
+        }
+
+        function renderHeroSlideshow() {
+            const container = document.getElementById('hero-slideshow');
+            let slides = [];
+            
+            if (siteData.media.hero.length > 0) {
+                slides = siteData.media.hero.map(m => ({
+                    url: m.url,
+                    type: m.type || (m.url.match(/\.(mp4|webm|ogg)$/i) ? 'video' : 'image')
+                }));
+            } else {
+                slides = [
+                    { url: 'forest-1.jpg', type: 'image' },
+                    { url: 'agarwood-1.jpg', type: 'image' },
+                    { url: 'oil-extraction-1.jpg', type: 'image' }
+                ];
+            }
+            
+            container.innerHTML = slides.map((slide, i) => {
+                if (slide.type === 'video') {
+                    return `<video autoplay muted loop playsinline class="hero-slide ${i === 0 ? 'active' : ''}"><source src="${slide.url}" type="video/mp4"></video>`;
+                } else {
+                    return `<img src="${slide.url}" alt="Hero Slide ${i+1}" class="hero-slide ${i === 0 ? 'active' : ''}">`;
+                }
+            }).join('');
+
+            // Clear existing interval if any
+            if (heroSlideshowInterval) {
+                clearInterval(heroSlideshowInterval);
+            }
+
+            let index = 0;
+            heroSlideshowInterval = setInterval(() => {
+                const slideElements = container.querySelectorAll('.hero-slide');
+                if (slideElements.length === 0) return;
+                slideElements[index].classList.remove('active');
+                index = (index + 1) % slideElements.length;
+                slideElements[index].classList.add('active');
+            }, 4000);
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('products-grid');
+            const products = siteData.media.products.length > 0 
+                ? siteData.media.products 
+                : [
+                    { url: 'product-1.jpg', caption: 'Pure Agarwood Oil' },
+                    { url: 'agarwood-1.jpg', caption: 'Premium Grade Oud' },
+                    { url: 'oil-extraction-1.jpg', caption: 'Luxury Attar Collection' }
+                ];
+
+            container.innerHTML = products.map((p, i) => `
+                <div class="product-card glass-effect rounded-3xl overflow-hidden hover-glow-scale reveal-scale editable">
+                    <div class="aspect-[3/4] bg-gradient-to-br from-gray-800 to-black flex items-center justify-center overflow-hidden creative-image media-wrapper" style="cursor: pointer;" onclick="triggerMediaUploadForProduct(${i})">
+                        <img src="${p.url}" alt="${p.caption || 'Product'}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                        ${document.body.classList.contains('edit-mode') ? `<button class="delete-btn" onclick="event.stopPropagation(); deleteMedia('products', ${i})">Delete</button>` : ''}
+                    </div>
+                    <div class="p-6 sm:p-8">
+                        <h3 class="font-playfair text-xl sm:text-2xl font-bold mb-2 editable-text" contenteditable="${document.body.classList.contains('edit-mode')}">${p.caption || 'Product ' + (i+1)}</h3>
+                        <p class="font-inter text-gray-400 text-sm mb-4">100% Natural & Steam Distilled</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 border border-amber/30 rounded-full text-xs font-poppins text-amber">3ml</span>
+                            <span class="px-3 py-1 border border-amber/30 rounded-full text-xs font-poppins text-amber">6ml</span>
+                            <span class="px-3 py-1 border border-amber/30 rounded-full text-xs font-poppins text-amber">12ml</span>
+                        </div>
+                        <a href="#contact" class="btn-secondary w-full text-center font-poppins text-sm">Inquire Now</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderGallery() {
+            const container = document.getElementById('gallery-grid');
+            const items = siteData.media.gallery.length > 0 
+                ? siteData.media.gallery 
+                : [
+                    { url: 'forest-1.jpg', type: 'image', caption: 'Agarwood Forests', large: true },
+                    { url: 'agarwood-1.jpg', type: 'image', caption: 'Agarwood Tree' },
+                    { url: 'oil-extraction-video.mp4', type: 'video', caption: 'Oil Extraction' },
+                    { url: 'oil-extraction-1.jpg', type: 'image', caption: 'Distillation' },
+                    { url: 'distillation-video.mp4', type: 'video', caption: 'Steam Distillation' },
+                    { url: 'factory-video.mp4', type: 'video', caption: 'Production Facility', large: true },
+                    { url: 'packaging-video.mp4', type: 'video', caption: 'Packaging' },
+                    { url: 'product-1.jpg', type: 'image', caption: 'Final Product' }
+                ];
+
+            container.innerHTML = items.map((item, i) => `
+                <div class="gallery-item ${item.large ? 'large' : ''} reveal-scale media-wrapper" style="cursor: pointer;" onclick="triggerMediaUploadForGallery(${i})">
+                    ${item.type === 'video' || item.url?.match(/\.(mp4|webm|ogg)$/i)
+                        ? `<video autoplay muted loop playsinline><source src="${item.url}" type="video/mp4"></video>`
+                        : `<img src="${item.url}" alt="${item.caption || 'Gallery'}">`
+                    }
+                    ${document.body.classList.contains('edit-mode') ? `<button class="delete-btn" onclick="event.stopPropagation(); deleteMedia('gallery', ${i})">Delete</button>` : ''}
+                    <div class="gallery-overlay">
+                        <h3 class="font-playfair ${item.large ? 'text-lg sm:text-xl' : 'text-sm'} font-bold text-white">${item.caption || 'Gallery'}</h3>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function triggerMediaUpload(section) {
+            if (!document.body.classList.contains('edit-mode')) return;
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,video/*';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                await uploadAndAddMedia(section, file);
+            };
+            input.click();
+        }
+
+        function triggerMediaUploadForProduct(index) {
+            if (!document.body.classList.contains('edit-mode')) return;
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,video/*';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                await uploadAndReplaceMedia('products', index, file);
+            };
+            input.click();
+        }
+
+        function triggerMediaUploadForGallery(index) {
+            if (!document.body.classList.contains('edit-mode')) return;
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,video/*';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                await uploadAndReplaceMedia('gallery', index, file);
+            };
+            input.click();
+        }
+
+        function triggerAboutMediaUpload() {
+            if (!document.body.classList.contains('edit-mode')) return;
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,video/*';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Date.now()}.${fileExt}`;
+                const filePath = `about/${fileName}`;
+                
+                const { error: uploadError } = await sbClient.storage.from('website-media').upload(filePath, file);
+                if (uploadError) { alert(uploadError.message); return; }
+                
+                const { data: { publicUrl } } = sbClient.storage.from('website-media').getPublicUrl(filePath);
+                document.querySelector('#about-media img').src = publicUrl;
+            };
+            input.click();
+        }
+        
+        function triggerLogoUpload() {
+            if (!document.body.classList.contains('edit-mode')) return;
+            document.getElementById('logo-upload').click();
+        }
+        
+        async function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const fileExt = file.name.split('.').pop();
+            const fileName = `logo.${fileExt}`;
+            const filePath = `logo/${fileName}`;
+            
+            const { error: uploadError } = await sbClient.storage.from('website-media').upload(filePath, file, {
+                upsert: true
+            });
+            if (uploadError) { alert(uploadError.message); return; }
+            
+            const { data: { publicUrl } } = sbClient.storage.from('website-media').getPublicUrl(filePath);
+            // Update both navbar and footer logos
+            document.querySelector('#logo-media img').src = publicUrl;
+            document.querySelector('footer img').src = publicUrl;
+        }
+
+        function triggerHeroMediaUpload() {
+            if (!document.body.classList.contains('edit-mode')) return;
+            triggerMediaUpload('hero');
+        }
+
+        async function uploadAndReplaceMedia(section, index, file) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}.${fileExt}`;
+            const filePath = `${section}/${fileName}`;
+            
+            const { error: uploadError } = await sbClient.storage.from('website-media').upload(filePath, file);
+            if (uploadError) { alert(uploadError.message); return; }
+            
+            const { data: { publicUrl } } = sbClient.storage.from('website-media').getPublicUrl(filePath);
+            
+            // Update the existing item
+            if (siteData.media[section][index]) {
+                siteData.media[section][index].url = publicUrl;
+                siteData.media[section][index].type = file.type.startsWith('video') ? 'video' : 'image';
+            }
+            
+            if (section === 'products') renderProducts();
+            if (section === 'gallery') renderGallery();
+            if (section === 'hero') renderHeroSlideshow();
+            if (section === 'about') {
+                document.querySelector('#about-media img').src = publicUrl;
+            }
+        }
+
+        async function uploadAndAddMedia(section, file) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}.${fileExt}`;
+            const filePath = `${section}/${fileName}`;
+            
+            const { error: uploadError } = await sbClient.storage.from('website-media').upload(filePath, file);
+            if (uploadError) { alert(uploadError.message); return; }
+            
+            const { data: { publicUrl } } = sbClient.storage.from('website-media').getPublicUrl(filePath);
+            
+            const { data: sectionData } = await sbClient.from('sections').select('id').eq('name', section).single();
+            if (!sectionData) return;
+            
+            const { error } = await sbClient.from('media_items').insert({
+                section_id: sectionData.id,
+                url: publicUrl,
+                type: file.type.startsWith('video') ? 'video' : 'image',
+                sort_order: siteData.media[section].length
+            });
+            
+            if (!error) {
+                await loadSiteData();
+                if (section === 'hero') renderHeroSlideshow();
+                if (section === 'products') renderProducts();
+                if (section === 'gallery') renderGallery();
+                if (section === 'about') {
+                    document.querySelector('#about-media img').src = publicUrl;
+                }
+            }
+        }
+
+        async function deleteMedia(section, index) {
+            if (!confirm('Delete this item?')) return;
+            const item = siteData.media[section][index];
+            if (item && item.id) {
+                await sbClient.from('media_items').delete().eq('id', item.id);
+            }
+            siteData.media[section].splice(index, 1);
+            if (section === 'products') renderProducts();
+            if (section === 'gallery') renderGallery();
+            if (section === 'hero') renderHeroSlideshow();
+        }
+
+        function addProduct() {
+            triggerMediaUpload('products');
+        }
+
+        function addGalleryItem() {
+            triggerMediaUpload('gallery');
+        }
+
+        async function saveChanges() {
+            const textElements = {
+                'hero-title': 'hero',
+                'hero-desc': 'hero',
+                'about-title': 'about',
+                'about-desc': 'about',
+                'vision-title': 'vision-mission',
+                'vision-desc': 'vision-mission',
+                'mission-title': 'vision-mission',
+                'mission-desc': 'vision-mission',
+                'products-title': 'products',
+                'gallery-title': 'gallery',
+                'gallery-desc': 'gallery'
+            };
+            
+            for (const [id, section] of Object.entries(textElements)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    await sbClient.from('sections').upsert({
+                        name: section,
+                        [id.includes('title') ? 'title' : 'description']: el.innerText
+                    }, { onConflict: 'name' });
+                }
+            }
+            
+            alert('Changes saved!');
+        }
+
+        function initRevealAnimations() {
+            const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+            const revealOnScroll = () => {
+                revealElements.forEach((el, i) => {
+                    if (el.getBoundingClientRect().top < window.innerHeight - 150) {
+                        setTimeout(() => el.classList.add('active'), i * 50);
+                    }
+                });
+            };
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll();
+        }
+    </script>
+</body>
+</html>

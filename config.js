@@ -1,0 +1,2 @@
+const SUPABASE_URL = 'https://qolaakzoyplbltzkhstv.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvbGFha3pveXBsYmx0emtoc3R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4ODg1NTYsImV4cCI6MjA5NTQ2NDU1Nn0.RBiio9by5PlbL0jFLJMunXGMfKqSOUAg2XAE4yv1tek';
