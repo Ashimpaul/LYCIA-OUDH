@@ -762,6 +762,7 @@
             renderHeroSlideshow();
             renderProducts();
             renderGallery();
+            renderAboutMedia();
             initRevealAnimations();
         });
 
@@ -1036,7 +1037,7 @@
         }
 
         function triggerAboutMediaUpload() {
-            if (!document.body.classList.contains('edit-mode')) return;
+            if (!isLoggedIn) return;
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*,video/*';
@@ -1051,9 +1052,21 @@
                 if (uploadError) { alert(uploadError.message); return; }
                 
                 const { data: { publicUrl } } = sbClient.storage.from('website-media').getPublicUrl(filePath);
-                document.querySelector('#about-media img').src = publicUrl;
+                const type = file.type.startsWith('video') ? 'video' : 'image';
+                siteData.media.about = [{ url: publicUrl, type }];
+                localStorage.setItem('lyciaSiteData', JSON.stringify(siteData));
+                renderAboutMedia();
             };
             input.click();
+        }
+        
+        function renderAboutMedia() {
+            const container = document.getElementById('about-media');
+            const media = siteData.media.about.length > 0 ? siteData.media.about[0] : { url: 'forest-1.jpg', type: 'image' };
+            
+            container.innerHTML = media.type === 'video'
+                ? `<video autoplay muted loop playsinline class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"><source src="${media.url}" type="video/mp4"></video>`
+                : `<img src="${media.url}" alt="Agarwood Forests" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">`;
         }
         
         function triggerLogoUpload() {
