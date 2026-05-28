@@ -370,16 +370,8 @@
                 <div class="reveal relative mt-8 md:mt-0 editable" id="about-media-container">
                     <div class="absolute -top-6 -left-6 w-48 sm:w-72 h-48 sm:h-72 bg-amber-900/20 rounded-full blur-3xl"></div>
                     <div class="relative glass-effect rounded-3xl p-4 sm:p-8 glow-effect creative-image">
-                        <div class="aspect-square rounded-2xl overflow-hidden media-wrapper flex flex-col items-center justify-center gap-4" id="about-media" style="min-height: 200px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); z-index: 100; position: relative;">
-                            <div id="about-media-preview" class="w-full h-full object-cover"></div>
-                            <span class="text-amber font-poppins text-sm opacity-50" id="about-media-placeholder">Click to add image</span>
-                            <input type="file" id="about-media-input" accept="image/*,video/*" style="display: none;" onchange="handleAboutMediaChange(this)">
-                            <button id="about-media-upload-btn" class="bg-amber text-black px-4 py-2 rounded-full font-poppins text-sm hover:bg-amber/80 transition hidden" onclick="document.getElementById('about-media-input').click()">
-                                Upload Image
-                            </button>
-                            <button id="about-media-delete-btn" class="bg-red-600 text-white px-4 py-2 rounded-full font-poppins text-sm hover:bg-red-500 transition hidden" onclick="handleAboutMediaDelete()">
-                                Delete
-                            </button>
+                        <div class="aspect-square rounded-2xl overflow-hidden media-wrapper" id="about-media" style="min-height: 200px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); z-index: 100; position: relative;">
+                            <img src="image2.jpeg" alt="About Us" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
                         </div>
                     </div>
                 </div>
@@ -773,7 +765,6 @@
             renderHeroSlideshow();
             renderProducts();
             renderGallery();
-            renderAboutMediaSimple();
             initRevealAnimations();
         });
 
@@ -876,10 +867,8 @@
                 addEditButtons();
                 renderProducts();
                 renderGallery();
-                renderAboutMediaSimple();
             } else {
                 document.querySelectorAll('.edit-btn, .delete-btn').forEach(el => el.remove());
-                renderAboutMediaSimple();
             }
         }
 
@@ -1060,66 +1049,6 @@
             input.click();
         }
 
-        function handleAboutMediaChange(input) {
-            console.log('🔵 handleAboutMediaChange called!');
-            const file = input.files[0];
-            if (!file) {
-                console.log('🔴 No file selected');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const tempUrl = event.target.result;
-                const type = file.type.startsWith('video') ? 'video' : 'image';
-                siteData.media.about = [{ url: tempUrl, type }];
-                localStorage.setItem('lyciaSiteData', JSON.stringify(siteData));
-                renderAboutMediaSimple();
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        function handleAboutMediaDelete() {
-            console.log('🔴 handleAboutMediaDelete called!');
-            if (!confirm('Delete this media?')) {
-                return;
-            }
-            
-            siteData.media.about = [];
-            localStorage.setItem('lyciaSiteData', JSON.stringify(siteData));
-            renderAboutMediaSimple();
-        }
-        
-        function renderAboutMediaSimple() {
-            const preview = document.getElementById('about-media-preview');
-            const placeholder = document.getElementById('about-media-placeholder');
-            const uploadBtn = document.getElementById('about-media-upload-btn');
-            const deleteBtn = document.getElementById('about-media-delete-btn');
-            
-            if (siteData.media.about.length > 0) {
-                const media = siteData.media.about[0];
-                const url = media.url;
-                if (media.type === 'video') {
-                    preview.innerHTML = `<video autoplay muted loop playsinline class="w-full h-full object-cover"><source src="${url}" type="video/mp4"></video>`;
-                } else {
-                    preview.innerHTML = `<img src="${url}" alt="About" class="w-full h-full object-cover">`;
-                }
-                placeholder.style.display = 'none';
-                preview.style.display = 'block';
-                if (isLoggedIn) {
-                    deleteBtn.classList.remove('hidden');
-                    uploadBtn.classList.remove('hidden');
-                }
-            } else {
-                preview.innerHTML = '';
-                placeholder.style.display = 'block';
-                deleteBtn.classList.add('hidden');
-                if (isLoggedIn) {
-                    uploadBtn.classList.remove('hidden');
-                }
-            }
-        }
-        
         function triggerLogoUpload() {
             if (!isLoggedIn) return;
             document.getElementById('logo-upload').click();
