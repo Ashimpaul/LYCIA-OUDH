@@ -137,6 +137,9 @@
             opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
         }
         .gallery-item:hover .gallery-overlay, .gallery-item:active .gallery-overlay { opacity: 1; }
+        #about-media {
+            position: relative;
+        }
         .reveal {
             opacity: 0; transform: translateY(30px);
             transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -367,7 +370,9 @@
                 <div class="reveal relative mt-8 md:mt-0 editable" id="about-media-container">
                     <div class="absolute -top-6 -left-6 w-48 sm:w-72 h-48 sm:h-72 bg-amber-900/20 rounded-full blur-3xl"></div>
                     <div class="relative glass-effect rounded-3xl p-4 sm:p-8 glow-effect creative-image">
-                        <div class="aspect-square rounded-2xl overflow-hidden media-wrapper" id="about-media" style="cursor: pointer;" onclick="triggerAboutMediaUpload()"></div>
+                        <div class="aspect-square rounded-2xl overflow-hidden media-wrapper flex items-center justify-center" id="about-media" style="cursor: pointer; min-height: 200px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);" onclick="triggerAboutMediaUpload()">
+                            <span class="text-amber font-poppins text-sm opacity-50" id="about-media-placeholder">Click to add image</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1089,23 +1094,40 @@
         function renderAboutMedia() {
             console.log('renderAboutMedia called, current siteData.media.about:', siteData.media.about);
             const container = document.getElementById('about-media');
+            const placeholder = document.getElementById('about-media-placeholder');
             if (!container) { console.error('about-media container not found'); return; }
-            const media = siteData.media.about.length > 0 ? siteData.media.about[0] : { url: 'forest-1.jpg', type: 'image' };
-            const cacheBuster = `?t=${Date.now()}`;
-            const url = media.url.includes('?') ? `${media.url}&t=${Date.now()}` : `${media.url}${cacheBuster}`;
-            console.log('Rendering media URL:', url);
             
-            let mediaHTML = media.type === 'video'
-                ? `<video autoplay muted loop playsinline class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"><source src="${url}" type="video/mp4"></video>`
-                : `<img src="${url}" alt="Agarwood Forests" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">`;
-            
-            if (isLoggedIn) {
-                mediaHTML += `
-                    <button class="delete-btn" onclick="event.stopPropagation(); deleteAboutMedia()" style="top: 8px; right: 8px; z-index: 20;">Delete</button>
-                `;
+            if (siteData.media.about.length > 0) {
+                if (placeholder) placeholder.style.display = 'none';
+                const media = siteData.media.about[0];
+                const cacheBuster = `?t=${Date.now()}`;
+                const url = media.url.includes('?') ? `${media.url}&t=${Date.now()}` : `${media.url}${cacheBuster}`;
+                console.log('Rendering media URL:', url);
+
+                let mediaHTML = media.type === 'video'
+                    ? `<video autoplay muted loop playsinline class="w-full h-full object-cover transition-transform duration-700 hover:scale-110 absolute top-0 left-0"><source src="${url}" type="video/mp4"></video>`
+                    : `<img src="${url}" alt="Agarwood Forests" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110 absolute top-0 left-0">`;
+
+                if (isLoggedIn) {
+                    mediaHTML += `
+                        <button class="delete-btn" onclick="event.stopPropagation(); deleteAboutMedia()" style="top: 8px; right: 8px; z-index: 20;">Delete</button>
+                    `;
+                }
+
+                container.innerHTML = mediaHTML;
+            } else {
+                if (placeholder) placeholder.style.display = 'block';
+                if (isLoggedIn) {
+                    container.innerHTML = `
+                        <span class="text-amber font-poppins text-sm opacity-50" id="about-media-placeholder">Click to add image</span>
+                        <button class="delete-btn" onclick="event.stopPropagation(); deleteAboutMedia()" style="top: 8px; right: 8px; z-index: 20; display: none;">Delete</button>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <img src="forest-1.jpg" alt="Agarwood Forests" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    `;
+                }
             }
-            
-            container.innerHTML = mediaHTML;
         }
         
         function deleteAboutMedia() {
