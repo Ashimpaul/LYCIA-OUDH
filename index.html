@@ -1189,15 +1189,19 @@
 
         function initRevealAnimations() {
             const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
-            const revealOnScroll = () => {
-                revealElements.forEach((el, i) => {
-                    if (el.getBoundingClientRect().top < window.innerHeight - 150) {
-                        setTimeout(() => el.classList.add('active'), i * 50);
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, idx) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => entry.target.classList.add('active'), idx * 50);
+                        observer.unobserve(entry.target);
                     }
                 });
-            };
-            window.addEventListener('scroll', revealOnScroll);
-            revealOnScroll();
+            }, observerOptions);
+            revealElements.forEach(el => observer.observe(el));
         }
     </script>
 </body>
