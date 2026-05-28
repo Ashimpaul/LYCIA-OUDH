@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Upload</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; background: #111; color: white; }
+        #preview { width: 300px; height: 300px; border: 2px dashed #666; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 20px 0; }
+        #preview img, #preview video { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+        button { background: #d4af37; color: black; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; margin: 5px; }
+        button:hover { opacity: 0.8; }
+        button.delete { background: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Test Image Upload</h1>
+    <div id="preview">Click buttons below</div>
+    <div>
+        <button onclick="upload()">Upload Image</button>
+        <button class="delete" onclick="deleteImg()">Delete</button>
+    </div>
+    <input type="file" id="fileInput" accept="image/*,video/*" style="display:none;">
+
+    <script>
+        let data = { media: { about: [] } };
+
+        // Load from localStorage
+        try {
+            const saved = localStorage.getItem('testData');
+            if (saved) {
+                data = JSON.parse(saved);
+                render();
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
+        function upload() {
+            const input = document.getElementById('fileInput');
+            input.click();
+        }
+
+        document.getElementById('fileInput').onchange = function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                data.media.about = [{ url: e.target.result, type: file.type.startsWith('video') ? 'video' : 'image' }];
+                localStorage.setItem('testData', JSON.stringify(data));
+                render();
+            };
+            reader.readAsDataURL(file);
+        };
+
+        function deleteImg() {
+            if (!confirm('Delete?')) return;
+            data.media.about = [];
+            localStorage.setItem('testData', JSON.stringify(data));
+            render();
+        }
+
+        function render() {
+            const preview = document.getElementById('preview');
+            if (data.media.about.length > 0) {
+                const m = data.media.about[0];
+                if (m.type === 'video') {
+                    preview.innerHTML = `<video autoplay muted loop playsinline><source src="${m.url}" type="video/mp4"></video>`;
+                } else {
+                    preview.innerHTML = `<img src="${m.url}" alt="Test">`;
+                }
+            } else {
+                preview.innerHTML = 'No image';
+            }
+        }
+    </script>
+</body>
+</html>
