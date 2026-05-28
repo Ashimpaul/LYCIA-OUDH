@@ -955,10 +955,10 @@
                 <div class="product-card glass-effect rounded-3xl overflow-hidden hover-glow-scale reveal-scale editable">
                     <div class="aspect-[3/4] bg-gradient-to-br from-gray-800 to-black flex items-center justify-center overflow-hidden creative-image media-wrapper" style="cursor: pointer;" onclick="triggerMediaUploadForProduct(${i})">
                         <img src="${p.url}" alt="${p.caption || 'Product'}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
-                        ${document.body.classList.contains('edit-mode') ? `<button class="delete-btn" onclick="event.stopPropagation(); deleteMedia('products', ${i})">Delete</button>` : ''}
+                        ${isLoggedIn ? `<button class="delete-btn" onclick="event.stopPropagation(); deleteMedia('products', ${i})">Delete</button>` : ''}
                     </div>
                     <div class="p-6 sm:p-8">
-                        <h3 class="font-playfair text-xl sm:text-2xl font-bold mb-2 editable-text" contenteditable="${document.body.classList.contains('edit-mode')}">${p.caption || 'Product ' + (i+1)}</h3>
+                        <h3 class="font-playfair text-xl sm:text-2xl font-bold mb-2 editable-text" contenteditable="${isLoggedIn}">${p.caption || 'Product ' + (i+1)}</h3>
                         <p class="font-inter text-gray-400 text-sm mb-4">100% Natural & Steam Distilled</p>
                         <div class="flex flex-wrap gap-2 mb-6">
                             <span class="px-3 py-1 border border-amber/30 rounded-full text-xs font-poppins text-amber">3ml</span>
@@ -988,7 +988,7 @@
                         ? `<video autoplay muted loop playsinline><source src="${item.url}" type="video/mp4"></video>`
                         : `<img src="${item.url}" alt="${item.caption || 'Gallery'}">`
                     }
-                    ${document.body.classList.contains('edit-mode') ? `<button class="delete-btn" onclick="event.stopPropagation(); deleteMedia('gallery', ${i})">Delete</button>` : ''}
+                    ${isLoggedIn ? `<button class="delete-btn" onclick="event.stopPropagation(); deleteMedia('gallery', ${i})">Delete</button>` : ''}
                     <div class="gallery-overlay">
                         <h3 class="font-playfair ${item.large ? 'text-lg sm:text-xl' : 'text-sm'} font-bold text-white">${item.caption || 'Gallery'}</h3>
                     </div>
