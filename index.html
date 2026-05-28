@@ -1063,14 +1063,16 @@
         function renderAboutMedia() {
             const container = document.getElementById('about-media');
             const media = siteData.media.about.length > 0 ? siteData.media.about[0] : { url: 'forest-1.jpg', type: 'image' };
+            const cacheBuster = `?t=${Date.now()}`;
+            const url = media.url.includes('?') ? `${media.url}&t=${Date.now()}` : `${media.url}${cacheBuster}`;
             
             container.innerHTML = media.type === 'video'
-                ? `<video autoplay muted loop playsinline class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"><source src="${media.url}" type="video/mp4"></video>`
-                : `<img src="${media.url}" alt="Agarwood Forests" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">`;
+                ? `<video autoplay muted loop playsinline class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"><source src="${url}" type="video/mp4"></video>`
+                : `<img src="${url}" alt="Agarwood Forests" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">`;
         }
         
         function triggerLogoUpload() {
-            if (!document.body.classList.contains('edit-mode')) return;
+            if (!isLoggedIn) return;
             document.getElementById('logo-upload').click();
         }
         
