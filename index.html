@@ -1193,10 +1193,12 @@
                 threshold: 0.1,
                 rootMargin: '0px 0px -100px 0px'
             };
+            let animationIndex = 0;
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry, idx) => {
+                entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        setTimeout(() => entry.target.classList.add('active'), idx * 50);
+                        setTimeout(() => entry.target.classList.add('active'), animationIndex * 80);
+                        animationIndex++;
                         observer.unobserve(entry.target);
                     }
                 });
